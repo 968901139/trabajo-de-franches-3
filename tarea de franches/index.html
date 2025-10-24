@@ -1,0 +1,2102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulados de Ecuador en el Mundo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        :root {
+            --primary: #FF7F00;
+            --primary-light: #FFA64D;
+            --primary-dark: #CC6600;
+            --secondary: #FFFFFF;
+            --accent: #0077B6;
+            --dark: #333333;
+            --light: #FFF5E6;
+            --text: #444444;
+            --gray-bg: #f5f5f5;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'Open Sans', sans-serif;
+            color: var(--text);
+            background-color: var(--light);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo img {
+            height: 60px;
+        }
+        
+        .logo h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.8rem;
+        }
+        
+        .logo p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+        
+        nav a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1580674694810-ba1f0b5c027d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-align: center;
+            padding: 100px 20px;
+        }
+        
+        .hero h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+        
+        /* Search Section */
+        .search-section {
+            background-color: var(--secondary);
+            padding: 40px 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        
+        .search-container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .search-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.8rem;
+            color: var(--primary-dark);
+            margin-bottom: 20px;
+        }
+        
+        .search-box {
+            display: flex;
+            max-width: 600px;
+            margin: 0 auto;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 50px;
+            overflow: hidden;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 15px 20px;
+            border: none;
+            font-size: 1.1rem;
+            outline: none;
+            background-color: var(--light);
+        }
+        
+        .search-button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0 25px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .search-button:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .search-results {
+            margin-top: 30px;
+            text-align: left;
+            display: none;
+        }
+        
+        .search-result-item {
+            background-color: var(--light);
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .search-result-item:hover {
+            background-color: #ffe9cc;
+            transform: translateY(-2px);
+        }
+        
+        .search-result-item h4 {
+            color: var(--primary-dark);
+            margin-bottom: 5px;
+        }
+        
+        .search-result-item p {
+            font-size: 0.9rem;
+            color: var(--text);
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--primary);
+            color: var(--secondary);
+            padding: 12px 30px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn:hover {
+            background-color: var(--primary-light);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+        }
+        
+        /* What is Section */
+        .what-is {
+            padding: 80px 0;
+            background-color: var(--secondary);
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .section-title h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.2rem;
+            color: var(--primary-dark);
+            margin-bottom: 15px;
+            display: inline-block;
+            position: relative;
+        }
+        
+        .section-title h2:after {
+            content: '';
+            display: block;
+            width: 70px;
+            height: 4px;
+            background: var(--primary);
+            margin: 10px auto;
+            border-radius: 2px;
+        }
+        
+        .what-is-content {
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+        
+        /* Services Overview */
+        .services-overview {
+            padding: 80px 0;
+            background-color: var(--gray-bg);
+        }
+        
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .service-card {
+            background: var(--secondary);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            padding: 30px;
+            border-left: 5px solid var(--primary);
+            text-align: center;
+            position: relative;
+        }
+        
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+        }
+        
+        .service-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+        
+        .service-card h3 {
+            font-family: 'Montserrat', sans-serif;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+        
+        .info-link {
+            display: inline-block;
+            margin-top: 15px;
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+        }
+        
+        .info-link:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+        
+        /* Service Details */
+        .service-detail {
+            display: none;
+            padding: 40px;
+            background: var(--secondary);
+            border-radius: 10px;
+            margin: 30px 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        .service-detail.active {
+            display: block;
+        }
+        
+        .service-detail h3 {
+            color: var(--primary-dark);
+            margin-bottom: 20px;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .service-detail ul {
+            margin: 15px 0;
+            padding-left: 20px;
+        }
+        
+        .service-detail li {
+            margin-bottom: 10px;
+        }
+        
+        .back-btn {
+            display: inline-block;
+            margin-top: 20px;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .back-btn:hover {
+            color: var(--primary-dark);
+        }
+        
+        /* Procedures Section */
+        .procedures {
+            padding: 80px 0;
+            background-color: var(--secondary);
+        }
+        
+        .procedures-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .procedure-card {
+            background: var(--light);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            padding: 30px;
+            text-align: center;
+            border-top: 5px solid var(--primary);
+        }
+        
+        .procedure-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+        }
+        
+        .procedure-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+        
+        .procedure-card h3 {
+            font-family: 'Montserrat', sans-serif;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+        
+        .procedure-card p {
+            margin-bottom: 20px;
+        }
+        
+        /* Locations Section */
+        .locations {
+            padding: 80px 0;
+            background-color: var(--secondary);
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            margin-top: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--secondary);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        th, td {
+            padding: 15px 20px;
+            text-align: left;
+            border-bottom: 1px solid #eaeaea;
+        }
+        
+        th {
+            background-color: var(--primary);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        tr:hover {
+            background-color: #FFF5E6;
+        }
+        
+        .map-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .map-link:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+        
+        /* Map Section */
+        .map-section {
+            padding: 80px 0;
+            background-color: var(--gray-bg);
+        }
+        
+        #map {
+            height: 500px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-top: 30px;
+            z-index: 1;
+        }
+        
+        /* Footer */
+        footer {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 60px 0 30px;
+            margin-top: 40px;
+        }
+        
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+        
+        .footer-section {
+            flex: 1;
+            min-width: 250px;
+        }
+        
+        .footer-section h3 {
+            font-family: 'Montserrat', sans-serif;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .footer-section h3:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: var(--secondary);
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+        
+        .footer-links a {
+            color: #ddd;
+            text-decoration: none;
+            transition: color 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .footer-links a:hover {
+            color: var(--secondary);
+        }
+        
+        .contact-info {
+            margin-top: 10px;
+        }
+        
+        .contact-info p {
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .author {
+            margin-top: 10px;
+            font-style: italic;
+        }
+        
+        /* University Banner */
+        .university-banner {
+            background-color: var(--gray-bg);
+            padding: 30px 0;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .university-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .university-logo {
+            height: 80px;
+        }
+        
+        .university-text {
+            max-width: 600px;
+        }
+        
+        .university-text h3 {
+            color: var(--primary-dark);
+            margin-bottom: 10px;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        /* Chat en vivo */
+        .chat-widget {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+        }
+        
+        .chat-button {
+            background-color: var(--primary);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .chat-button:hover {
+            background-color: var(--primary-dark);
+            transform: scale(1.1);
+        }
+        
+        .chat-button i {
+            font-size: 24px;
+        }
+        
+        .chat-button .notification {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #ff4444;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .chat-container {
+            position: absolute;
+            bottom: 70px;
+            right: 0;
+            width: 350px;
+            height: 500px;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .chat-container.active {
+            display: flex;
+        }
+        
+        .chat-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .chat-header h3 {
+            font-size: 1.2rem;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .chat-status {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.8rem;
+        }
+        
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #4CAF50;
+        }
+        
+        .close-chat {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color: #f9f9f9;
+        }
+        
+        .message {
+            max-width: 80%;
+            padding: 10px 15px;
+            border-radius: 18px;
+            position: relative;
+            line-height: 1.4;
+        }
+        
+        .user-message {
+            align-self: flex-end;
+            background-color: var(--primary);
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+        
+        .bot-message {
+            align-self: flex-start;
+            background-color: #e5e5ea;
+            color: #333;
+            border-bottom-left-radius: 5px;
+        }
+        
+        .message-time {
+            font-size: 0.7rem;
+            margin-top: 5px;
+            opacity: 0.7;
+            text-align: right;
+        }
+        
+        .chat-input-container {
+            padding: 15px;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .chat-input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            outline: none;
+            font-size: 0.9rem;
+        }
+        
+        .send-button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .send-button:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .chat-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .chat-option {
+            background-color: #e5e5ea;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .chat-option:hover {
+            background-color: #d6d6d6;
+        }
+        
+        /* Modal para formularios de trámites */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background-color: white;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px 10px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h3 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.5rem;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .modal-body {
+            padding: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+        
+        .required {
+            color: #ff4444;
+        }
+        
+        .form-note {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .file-upload {
+            border: 2px dashed #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+        }
+        
+        .file-upload:hover {
+            border-color: var(--primary);
+        }
+        
+        .file-upload i {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .progress-bar {
+            height: 5px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background-color: var(--primary);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+        }
+        
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+        
+        .success-message {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .success-message i {
+            font-size: 4rem;
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+        
+        .success-message h3 {
+            color: var(--primary-dark);
+            margin-bottom: 15px;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+            
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 15px;
+            }
+            
+            .hero h2 {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .section-title h2 {
+                font-size: 1.8rem;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+            }
+            
+            .university-content {
+                flex-direction: column;
+            }
+            
+            .search-box {
+                flex-direction: column;
+                border-radius: 10px;
+            }
+            
+            .search-input {
+                border-radius: 10px 10px 0 0;
+            }
+            
+            .search-button {
+                border-radius: 0 0 10px 10px;
+                padding: 15px;
+            }
+            
+            .chat-container {
+                width: 300px;
+                height: 450px;
+            }
+            
+            .chat-widget {
+                bottom: 20px;
+                right: 20px;
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            
+            .modal-content {
+                width: 95%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/e/e8/Flag_of_Ecuador.svg" alt="Bandera Ecuador" style="height: 40px;">
+                <div>
+                    <h1>Consulados de Ecuador</h1>
+                    <p>Serviendo a ecuatorianos en el mundo</p>
+                </div>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#inicio">Inicio</a></li>
+                    <li><a href="#buscar">Buscar</a></li>
+                    <li><a href="#que-es">¿Qué es?</a></li>
+                    <li><a href="#servicios">Servicios</a></li>
+                    <li><a href="#tramites">Trámites</a></li>
+                    <li><a href="#ubicaciones">Ubicaciones</a></li>
+                    <li><a href="#mapa">Mapa</a></li>
+                    <li><a href="#contacto">Contacto</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="inicio">
+        <div class="container">
+            <h2>Consulados de Ecuador en el Mundo</h2>
+            <p>Información general sobre los servicios y ubicaciones de los consulados ecuatorianos a nivel internacional</p>
+            <a href="#servicios" class="btn">Nuestros servicios</a>
+        </div>
+    </section>
+
+    <!-- Search Section -->
+    <section class="search-section" id="buscar">
+        <div class="container search-container">
+            <h2 class="search-title">¿Qué necesitas encontrar?</h2>
+            <div class="search-box">
+                <input type="text" class="search-input" placeholder="Buscar servicios, trámites, ubicaciones...">
+                <button class="search-button">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+            <div class="search-results">
+                <!-- Los resultados de búsqueda se mostrarán aquí -->
+            </div>
+        </div>
+    </section>
+
+    <!-- University Banner -->
+    <div class="university-banner">
+        <div class="container university-content">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Logo_UAP.svg/1200px-Logo_UAP.svg.png" alt="Universidad Autónoma del Perú" class="university-logo">
+            <div class="university-text">
+                <h3>Universidad Autónoma del Perú</h3>
+                <p>Facultad de Ingeniería de Sistemas - Proyecto Académico</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- What is Section -->
+    <section class="what-is" id="que-es">
+        <div class="container">
+            <div class="section-title">
+                <h2>¿Qué es un Consulado de Ecuador?</h2>
+            </div>
+            <div class="what-is-content">
+                <p>Los consulados de Ecuador son oficinas diplomáticas que representan al gobierno ecuatoriano en otros países. Su función principal es asistir y proteger a los ciudadanos ecuatorianos en el exterior, brindando servicios como registro civil, documentación, asistencia legal y ayuda en emergencias. Además, promueven los intereses comerciales y culturales de Ecuador en el país anfitrión.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Overview -->
+    <section class="services-overview" id="servicios">
+        <div class="container">
+            <div class="section-title">
+                <h2>Servicios Consulares</h2>
+                <p>Conoce todos los servicios que ofrecemos a los ciudadanos ecuatorianos</p>
+            </div>
+            
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-passport"></i>
+                    </div>
+                    <h3>Emisión y renovación de pasaportes</h3>
+                    <p>Gestión y renovación de documentos de identidad y pasaportes para ciudadanos ecuatorianos en el exterior.</p>
+                    <a href="#pasaportes-info" class="info-link">Más información ↓</a>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-id-card"></i>
+                    </div>
+                    <h3>Visas y permisos</h3>
+                    <p>Información y trámites relacionados con visas y permisos para extranjeros que desean visitar o residir en Ecuador.</p>
+                    <a href="#visas-info" class="info-link">Más información ↓</a>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-certificate"></i>
+                    </div>
+                    <h3>Registro civil</h3>
+                    <p>Registro de nacimientos, matrimonios y defunciones de ciudadanos ecuatorianos en el extranjero.</p>
+                    <a href="#registro-info" class="info-link">Más información ↓</a>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-hand-holding-heart"></i>
+                    </div>
+                    <h3>Ayuda en emergencias</h3>
+                    <p>Asistencia en casos de emergencia como accidentes, enfermedades, detenciones o desastres naturales.</p>
+                    <a href="#emergencias-info" class="info-link">Más información ↓</a>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-gavel"></i>
+                    </div>
+                    <h3>Asistencia legal y notarial</h3>
+                    <p>Servicios notariales, legalización de documentos y asesoría legal básica para ciudadanos ecuatorianos.</p>
+                    <a href="#legal-info" class="info-link">Más información ↓</a>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-hands-helping"></i>
+                    </div>
+                    <h3>Protección consular</h3>
+                    <p>Protección de los derechos e intereses de los ciudadanos ecuatorianos en el país de acogida.</p>
+                    <a href="#proteccion-info" class="info-link">Más información ↓</a>
+                </div>
+            </div>
+            
+            <!-- Service Details -->
+            <div id="pasaportes-info" class="service-detail">
+                <h3>Emisión y renovación de pasaportes</h3>
+                <p>Gestión y renovación de documentos de identidad y pasaportes para ciudadanos ecuatorianos en el exterior.</p>
+                
+                <h4>Requisitos para renovación:</h4>
+                <ul>
+                    <li>Cédula de identidad ecuatoriana original y copia</li>
+                    <li>Pasaporte anterior (si aplica)</li>
+                    <li>Certificado de votación (para mayores de 18 años)</li>
+                    <li>Formulario de solicitud debidamente llenado</li>
+                    <li>Dos fotografías tamaño pasaporte a color</li>
+                    <li>Pago de tarifas consulares correspondientes</li>
+                </ul>
+                
+                <h4>Proceso y tiempos:</h4>
+                <p>El tiempo de procesamiento usual es de 4 a 6 semanas. Se recomienda iniciar el trámite al menos 3 meses antes de la expiración del documento.</p>
+                
+                <a href="#servicios" class="back-btn"><i class="fas fa-arrow-left"></i> Volver a servicios</a>
+            </div>
+            
+            <div id="visas-info" class="service-detail">
+                <h3>Visas y permisos</h3>
+                <p>Información y trámites relacionados con visas y permisos para extranjeros que desean visitar or residir en Ecuador.</p>
+                
+                <h4>Tipos de visa para Ecuador:</h4>
+                <ul>
+                    <li><strong>Visa de turista:</strong> Para estadías hasta 90 días</li>
+                    <li><strong>Visa temporal:</strong> Para estudios, trabajo o actividades por tiempo determinado</li>
+                    <li><strong>Visa permanente:</strong> Para residencia indefinida</li>
+                    <li><strong>Visa diplomática/official:</strong> Para funcionarios internacionales</li>
+                </ul>
+                
+                <h4>Requisitos generales para visa de turista:</h4>
+                <ul>
+                    <li>Pasaporte válido por al menos 6 meses</li>
+                    <li>Formulario de solicitud debidamente llenado</li>
+                    <li>Fotografías recientes</li>
+                    <li>Itinerario de viaje o boleto de regreso</li>
+                    <li>Comprobante de solvencia económica</li>
+                    <li>Pago de tarifa correspondiente</li>
+                </ul>
+                
+                <a href="#servicios" class="back-btn"><i class="fas fa-arrow-left"></i> Volver a servicios</a>
+            </div>
+            
+            <div id="registro-info" class="service-detail">
+                <h3>Registro civil</h3>
+                <p>Registro de nacimientos, matrimonios y defunciones de ciudadanos ecuatorianos en el extranjero.</p>
+                
+                <h4>Tipos de registro:</h4>
+                <ul>
+                    <li><strong>Nacimientos:</strong> Inscripción de niños nacidos en el exterior de padres ecuatorianos</li>
+                    <li><strong>Matrimonios:</strong> Registro de matrimonios celebrados en el exterior donde al menos un cónyuge es ecuatoriano</li>
+                    <li><strong>Defunciones:</strong> Registro de fallecimientos de ciudadanos ecuatorianos en el exterior</li>
+                </ul>
+                
+                <h4>Documentación requerida (para nacimientos):</h4>
+                <ul>
+                    <li>Certificado de nacimiento local traducido y apostillado</li>
+                    <li>Cédulas de identidad de los padres</li>
+                    <li>Pasaportes de los padres</li>
+                    <li>Certificado de matrimonio de los padres (si aplica)</li>
+                    <li>Formulario de registro debidamente llenado</li>
+                </ul>
+                
+                <a href="#servicios" class="back-btn"><i class="fas fa-arrow-left"></i> Volver a servicios</a>
+            </div>
+            
+            <div id="emergencias-info" class="service-detail">
+                <h3>Ayuda en emergencias</h3>
+                <p>Asistencia en casos de emergencia como accidentes, enfermedades, detenciones o desastres naturales.</p>
+                
+                <h4>Tipos de asistencia en emergencias:</h4>
+                <ul>
+                    <li><strong>Asistencia médica:</strong> Referencias de médicos y hospitales, coordinación con compañías de seguros</li>
+                    <li><strong>Accidentes y fallecimientos:</strong> Apoyo en repatriación, coordinación con autoridades locales</li>
+                    <li><strong>Detenciones:</strong> Visitas consulares, referencia de abogados, contacto con familiares</li>
+                    <li><strong>Desastres naturales:</strong> Información, evacuación, coordinación con autoridades</li>
+                    <li><strong>Pérdida de documentos:</strong> Emisión de documentos de emergencia</li>
+                </ul>
+                
+                <h4>En caso de emergencia:</h4>
+                <ul>
+                    <li>Mantenga la calma y contacte a las autoridades locales primero (policía, ambulancia)</li>
+                    <li>Comuníquese con el consulado tan pronto como sea posible</li>
+                    <li>Proporcione información detallada de la situación y su ubicación exacta</li>
+                    <li>Tenga a mano su número de pasaporte y información de contacto</li>
+                </ul>
+                
+                <a href="#servicios" class="back-btn"><i class="fas fa-arrow-left"></i> Volver a servicios</a>
+            </div>
+            
+            <div id="legal-info" class="service-detail">
+                <h3>Asistencia legal y notarial</h3>
+                <p>Servicios notariales, legalización de documentos y asesoría legal básica para ciudadanos ecuatorianos.</p>
+                
+                <h4>Servicios ofrecidos:</h4>
+                <ul>
+                    <li>Legalización de firmas en documentos</li>
+                    <li>Certificación de copias de documentos</li>
+                    <li>Autorizaciones para menores de edad</li>
+                    <li>Poderes notariales</li>
+                    <li>Asesoría legal básica</li>
+                    <li>Traducciones juradas</li>
+                </ul>
+                
+                <h4>Documentos comunes para legalización:</h4>
+                <ul>
+                    <li>Poderes notariales</li>
+                    <li>Documentos académicos</li>
+                    <li>Certificados de antecedentes penales</li>
+                    <li>Documentos comerciales</li>
+                    <li>Declaraciones juradas</li>
+                </ul>
+                
+                <a href="#servicios" class="back-btn"><i class="fas fa-arrow-left"></i> Volver a servicios</a>
+            </div>
+            
+            <div id="proteccion-info" class="service-detail">
+                <h3>Protección consular</h3>
+                <p>Protección de los derechos e intereses de los ciudadanos ecuatorianos en el país de acogida.</p>
+                
+                <h4>Áreas de protección consular:</h4>
+                <ul>
+                    <li><strong>Derechos humanos:</strong> Protección contra abusos y discriminación</li>
+                    <li><strong>Asistencia legal:</strong> Garantizar debido proceso en casos judiciales</li>
+                    <li><strong>Bienestar:</strong> Verificación de condiciones de detención o trabajo</li>
+                    <li><strong>Representación:</strong> Intervención ante autoridades locales cuando sea necesario</li>
+                    <li><strong>Información:</strong> Asesoramiento sobre derechos y obligaciones en el país de acogida</li>
+                </ul>
+                
+                <h4>Limitaciones de la protección consular:</h4>
+                <ul>
+                    <li>No puede interferir en procesos judiciales locales</li>
+                    <li>No puede proporcionar asistencia financiera directa</li>
+                    <li>No puede realizar investigaciones criminales</li>
+                    <li>No puede actuar como abogado o representante legal</li>
+                    <li>No puede exigir tratamiento preferencial ante las leyes locales</li>
+                </ul>
+                
+                <a href="#servicios" class="back-btn"><i class="fas fa-arrow-left"></i> Volver a servicios</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Procedures Section -->
+    <section class="procedures" id="tramites">
+        <div class="container">
+            <div class="section-title">
+                <h2>Iniciar Trámites Consulares</h2>
+                <p>Accede a los formularios y procedimientos para realizar tus trámites consulares</p>
+            </div>
+            
+            <div class="procedures-grid">
+                <div class="procedure-card">
+                    <div class="procedure-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <h3>Solicitud de Pasaporte</h3>
+                    <p>Renovación o primera emisión de pasaporte ecuatoriano para ciudadanos en el exterior.</p>
+                    <button class="btn iniciar-tramite" data-tramite="pasaporte">Iniciar Trámite</button>
+                </div>
+                
+                <div class="procedure-card">
+                    <div class="procedure-icon">
+                        <i class="fas fa-file-signature"></i>
+                    </div>
+                    <h3>Solicitud de Visa</h3>
+                    <p>Para extranjeros que desean visitar o residir en Ecuador por diferentes motivos.</p>
+                    <button class="btn iniciar-tramite" data-tramite="visa">Iniciar Trámite</button>
+                </div>
+                
+                <div class="procedure-card">
+                    <div class="procedure-icon">
+                        <i class="fas fa-baby"></i>
+                    </div>
+                    <h3>Registro de Nacimiento</h3>
+                    <p>Inscripción de niños nacidos en el exterior de padres ecuatorianos.</p>
+                    <button class="btn iniciar-tramite" data-tramite="nacimiento">Iniciar Trámite</button>
+                </div>
+                
+                <div class="procedure-card">
+                    <div class="procedure-icon">
+                        <i class="fas fa-ring"></i>
+                    </div>
+                    <h3>Registro de Matrimonio</h3>
+                    <p>Registro de matrimonios celebrados en el exterior con al menos un cónyuge ecuatoriano.</p>
+                    <button class="btn iniciar-tramite" data-tramite="matrimonio">Iniciar Trámite</button>
+                </div>
+                
+                <div class="procedure-card">
+                    <div class="procedure-icon">
+                        <i class="fas fa-stamp"></i>
+                    </div>
+                    <h3>Legalización de Documentos</h3>
+                    <p>Autenticación de firmas, certificación de copias y legalización de documentos.</p>
+                    <button class="btn iniciar-tramite" data-tramite="legalizacion">Iniciar Trámite</button>
+                </div>
+                
+                <div class="procedure-card">
+                    <div class="procedure-icon">
+                        <i class="fas fa-user-check"></i>
+                    </div>
+                    <h3>Registro Consular</h3>
+                    <p>Inscripción en el registro consular para recibir asistencia y notificaciones.</p>
+                    <button class="btn iniciar-tramite" data-tramite="registro">Iniciar Trámite</button>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 40px;">
+                <p>Para consultar el estado de un trámite existente o para más información, contacta directamente con el consulado correspondiente.</p>
+                <a href="#contacto" class="btn" style="margin-top: 20px;">Contactar Consulado</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Locations Section -->
+    <section class="locations" id="ubicaciones">
+        <div class="container">
+            <div class="section-title">
+                <h2>Ubicaciones Destacadas</h2>
+                <p>Ecuador tiene consulados en más de 50 países alrededor del mundo</p>
+            </div>
+            
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>País</th>
+                            <th>Ciudad</th>
+                            <th>Dirección</th>
+                            <th>Ubicación</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><i class="fas fa-flag-usa"></i> Estados Unidos</td>
+                            <td>Nueva York</td>
+                            <td>24 W 56th St, New York, NY 10019</td>
+                            <td><a href="https://maps.google.com/?q=24+W+56th+St,+New+York,+NY+10019" class="map-link" target="_blank">Ver mapa <i class="fas fa-map-marker-alt"></i></a></td>
+                        </tr>
+                        <tr>
+                            <td><i class="fas fa-flag"></i> España</td>
+                            <td>Madrid</td>
+                            <td>Calle de Velázquez, 114, 28006 Madrid</td>
+                            <td><a href="https://maps.google.com/?q=Calle+de+Velázquez+114,+28006+Madrid" class="map-link" target="_blank">Ver mapa <i class="fas fa-map-marker-alt"></i></a></td>
+                        </tr>
+                        <tr>
+                            <td><i class="fas fa-flag"></i> Italia</td>
+                            <td>Milán</td>
+                            <td>Via San Pietro all'Orio, 17, 20121 Milano</td>
+                            <td><a href="https://maps.google.com/?q=Via+San+Pietro+all'Orio+17,+20121+Milano" class="map-link" target="_blank">Ver mapa <i class="fas fa-map-marker-alt"></i></a></td>
+                        </tr>
+                        <tr>
+                            <td><i class="fas fa-flag"></i> Argentina</td>
+                            <td>Buenos Aires</td>
+                            <td>Av. Corrientes 2130, C1045AAN CABA</td>
+                            <td><a href="https://maps.google.com/?q=Av.+Corrientes+2130,+C1045AAN+CABA" class="map-link" target="_blank">Ver mapa <i class="fas fa-map-marker-alt"></i></a></td>
+                        </tr>
+                        <tr>
+                            <td><i class="fas fa-flag"></i> Chile</td>
+                            <td>Santiago</td>
+                            <td>Av. Providencia 1850, Providencia</td>
+                            <td><a href="https://maps.google.com/?q=Av.+Providencia+1850,+Providencia" class="map-link" target="_blank">Ver mapa <i class="fas fa-map-marker-alt"></i></a></td>
+                        </tr>
+                        <tr>
+                            <td><i class="fas fa-flag"></i> Perú</td>
+                            <td>Lima</td>
+                            <td>Av. Salaverry 1912, Jesús María</td>
+                            <td><a href="https://maps.google.com/?q=Av.+Salaverry+1912,+Jesús+María" class="map-link" target="_blank">Ver mapa <i class="fas fa-map-marker-alt"></i></a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <p style="text-align: center; margin-top: 30px;">Para la lista completa de consulados, visita el sitio oficial de la Cancillería ecuatoriana.</p>
+            <div style="text-align: center; margin-top: 20px;">
+                <a href="https://www.cancilleria.gob.ec" class="btn" target="_blank">Visitar Cancillería</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Map Section -->
+    <section class="map-section" id="mapa">
+        <div class="container">
+            <div class="section-title">
+                <h2>Mapa de Consulados de Ecuador</h2>
+                <p>Ubicación de los consulados de Ecuador alrededor del mundo</p>
+            </div>
+            
+            <div id="map"></div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contacto">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Consulados de Ecuador</h3>
+                    <p>Servicios consulares para ecuatorianos en el exterior. Encuentra ayuda, información y asistencia en nuestros consulados alrededor del mundo.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Enlaces rápidos</h3>
+                    <ul class="footer-links">
+                        <li><a href="#inicio"><i class="fas fa-chevron-right"></i> Inicio</a></li>
+                        <li><a href="#buscar"><i class="fas fa-chevron-right"></i> Buscar</a></li>
+                        <li><a href="#que-es"><i class="fas fa-chevron-right"></i> ¿Qué es?</a></li>
+                        <li><a href="#servicios"><i class="fas fa-chevron-right"></i> Servicios</a></li>
+                        <li><a href="#tramites"><i class="fas fa-chevron-right"></i> Trámites</a></li>
+                        <li><a href="#ubicaciones"><i class="fas fa-chevron-right"></i> Ubicaciones</a></li>
+                        <li><a href="#mapa"><i class="fas fa-chevron-right"></i> Mapa</a></li>
+                        <li><a href="#contacto"><i class="fas fa-chevron-right"></i> Contacto</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contacto</h3>
+                    <div class="contact-info">
+                        <p><i class="fas fa-map-marker-alt"></i> Cancillería de Ecuador</p>
+                        <p><i class="fas fa-phone"></i> +593 2 299 3200</p>
+                        <p><i class="fas fa-envelope"></i> info@cancilleria.gob.ec</p>
+                        <p><i class="fas fa-globe"></i> www.cancilleria.gob.ec</p>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>©️ 2025 - Proyecto Escolar sobre Consulados de Ecuador. Fuente: Cancillería de Ecuador.</p>
+                <p>Universidad Autónoma del Perú - Facultad de Ingeniería de Sistemas</p>
+                <p class="author">Hecho por Franchesca Guillén Ávalos</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Chat en vivo -->
+    <div class="chat-widget">
+        <div class="chat-button">
+            <i class="fas fa-comments"></i>
+            <div class="notification">1</div>
+        </div>
+        <div class="chat-container">
+            <div class="chat-header">
+                <div>
+                    <h3>Asistente Consular</h3>
+                    <div class="chat-status">
+                        <div class="status-indicator"></div>
+                        <span>En línea</span>
+                    </div>
+                </div>
+                <button class="close-chat">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="chat-messages">
+                <div class="message bot-message">
+                    ¡Hola! Soy tu asistente virtual de consulados de Ecuador. ¿En qué puedo ayudarte hoy?
+                    <div class="message-time">10:00</div>
+                </div>
+                <div class="chat-options">
+                    <button class="chat-option">Información sobre pasaportes</button>
+                    <button class="chat-option">Trámites de visa</button>
+                    <button class="chat-option">Ubicación de consulados</button>
+                    <button class="chat-option">Emergencias consulares</button>
+                </div>
+            </div>
+            <div class="chat-input-container">
+                <input type="text" class="chat-input" placeholder="Escribe tu mensaje...">
+                <button class="send-button">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para formularios de trámites -->
+    <div class="modal" id="modal-tramite">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-titulo">Solicitud de Trámite</h3>
+                <button class="close-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="modal-cuerpo">
+                <!-- El contenido del formulario se cargará aquí dinámicamente -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="btn-cancelar">Cancelar</button>
+                <button class="btn" id="btn-enviar">Enviar Solicitud</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // Datos para la búsqueda
+        const searchData = [
+            { title: "Pasaporte", description: "Emisión y renovación de pasaportes ecuatorianos", category: "servicios", target: "pasaportes-info" },
+            { title: "Visa", description: "Solicitud de visas para visitar Ecuador", category: "servicios", target: "visas-info" },
+            { title: "Registro Civil", description: "Registro de nacimientos, matrimonios y defunciones", category: "servicios", target: "registro-info" },
+            { title: "Emergencias", description: "Asistencia en casos de emergencia", category: "servicios", target: "emergencias-info" },
+            { title: "Asistencia Legal", description: "Servicios notariales y legalización de documentos", category: "servicios", target: "legal-info" },
+            { title: "Protección Consular", description: "Protección de derechos de ciudadanos ecuatorianos", category: "servicios", target: "proteccion-info" },
+            { title: "Nueva York", description: "Consulado de Ecuador en Nueva York, Estados Unidos", category: "ubicaciones", target: "ubicaciones" },
+            { title: "Madrid", description: "Consulado de Ecuador en Madrid, España", category: "ubicaciones", target: "ubicaciones" },
+            { title: "Lima", description: "Consulado de Ecuador en Lima, Perú", category: "ubicaciones", target: "ubicaciones" },
+            { title: "Solicitud de Pasaporte", description: "Iniciar trámite de pasaporte ecuatoriano", category: "tramites", target: "tramites" },
+            { title: "Registro de Nacimiento", description: "Inscripción de niños nacidos en el exterior", category: "tramites", target: "tramites" },
+            { title: "Legalización de Documentos", description: "Autenticación y certificación de documentos", category: "tramites", target: "tramites" }
+        ];
+
+        // Función para buscar
+        function performSearch(query) {
+            const resultsContainer = document.querySelector('.search-results');
+            resultsContainer.innerHTML = '';
+            
+            if (query.trim() === '') {
+                resultsContainer.style.display = 'none';
+                return;
+            }
+            
+            const filteredResults = searchData.filter(item => 
+                item.title.toLowerCase().includes(query.toLowerCase()) || 
+                item.description.toLowerCase().includes(query.toLowerCase())
+            );
+            
+            if (filteredResults.length === 0) {
+                resultsContainer.innerHTML = '<div class="search-result-item"><p>No se encontraron resultados para "' + query + '"</p></div>';
+            } else {
+                filteredResults.forEach(result => {
+                    const resultItem = document.createElement('div');
+                    resultItem.className = 'search-result-item';
+                    resultItem.innerHTML = `
+                        <h4>${result.title}</h4>
+                        <p>${result.description}</p>
+                    `;
+                    resultItem.addEventListener('click', function() {
+                        // Ocultar todos los detalles de servicio
+                        document.querySelectorAll('.service-detail').forEach(detail => {
+                            detail.classList.remove('active');
+                        });
+                        
+                        // Mostrar el detalle seleccionado si es un servicio
+                        if (result.category === 'servicios') {
+                            document.getElementById(result.target).classList.add('active');
+                        }
+                        
+                        // Desplazarse suavemente hacia la sección
+                        document.getElementById(result.target).scrollIntoView({ behavior: 'smooth' });
+                        
+                        // Ocultar resultados de búsqueda
+                        resultsContainer.style.display = 'none';
+                    });
+                    resultsContainer.appendChild(resultItem);
+                });
+            }
+            
+            resultsContainer.style.display = 'block';
+        }
+
+        // Configurar el buscador
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.querySelector('.search-input');
+            const searchButton = document.querySelector('.search-button');
+            
+            searchButton.addEventListener('click', function() {
+                performSearch(searchInput.value);
+            });
+            
+            searchInput.addEventListener('keyup', function(event) {
+                if (event.key === 'Enter') {
+                    performSearch(searchInput.value);
+                }
+            });
+            
+            // Mostrar sección específica si hay hash en la URL
+            if (window.location.hash) {
+                const targetId = window.location.hash.substring(1);
+                if (document.getElementById(targetId)) {
+                    document.getElementById(targetId).scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+            
+            // Inicializar el mapa
+            initMap();
+            
+            // Configurar el chat en vivo
+            setupChat();
+            
+            // Configurar los botones de iniciar trámite
+            setupTramites();
+        });
+        
+        // Función para mostrar la información detallada de cada servicio
+        document.querySelectorAll('.info-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                
+                // Ocultar todos los detalles de servicio
+                document.querySelectorAll('.service-detail').forEach(detail => {
+                    detail.classList.remove('active');
+                });
+                
+                // Mostrar el detalle seleccionado
+                document.getElementById(targetId).classList.add('active');
+                
+                // Desplazarse suavemente hacia la sección
+                document.getElementById(targetId).scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+        
+        // Función para inicializar el mapa con los consulados
+        function initMap() {
+            // Crear el mapa centrado en Ecuador
+            const map = L.map('map').setView([-1.8312, -78.1834], 3);
+            
+            // Añadir capa de OpenStreetMap con una URL alternativa
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+            
+            // Lista de consulados de Ecuador (coordenadas aproximadas)
+            const consulados = [
+                {nombre: "Consulado en Nueva York", pais: "Estados Unidos", lat: 40.7624, lon: -73.9738},
+                {nombre: "Consulado en Madrid", pais: "España", lat: 40.4319, lon: -3.6914},
+                {nombre: "Consulado en Milán", pais: "Italia", lat: 45.4642, lon: 9.1900},
+                {nombre: "Consulado en Buenos Aires", pais: "Argentina", lat: -34.6037, lon: -58.3816},
+                {nombre: "Consulado en Santiago", pais: "Chile", lat: -33.4489, lon: -70.6693},
+                {nombre: "Consulado en Lima", pais: "Perú", lat: -12.0464, lon: -77.0428},
+                {nombre: "Consulado en Londres", pais: "Reino Unido", lat: 51.5074, lon: -0.1278},
+                {nombre: "Consulado en París", pais: "Francia", lat: 48.8566, lon: 2.3522},
+                {nombre: "Consulado en Berlín", pais: "Alemania", lat: 52.5200, lon: 13.4050},
+                {nombre: "Consulado en Tokio", pais: "Japón", lat: 35.6762, lon: 139.6503},
+                {nombre: "Consulado en Ottawa", pais: "Canadá", lat: 45.4215, lon: -75.6972},
+                {nombre: "Consulado en Ciudad de México", pais: "México", lat: 19.4326, lon: -99.1332},
+                {nombre: "Consulado en Bogotá", pais: "Colombia", lat: 4.7110, lon: -74.0721},
+                {nombre: "Consulado en Caracas", pais: "Venezuela", lat: 10.4806, lon: -66.9036},
+                {nombre: "Consulado en Brasilia", pais: "Brasil", lat: -15.7975, lon: -47.8919}
+            ];
+            
+            // Crear un icono personalizado usando SVG
+            const conIcon = L.divIcon({
+                html: '<svg xmlns="http://www.w3.org/2000/svg" width="25" height="41" viewBox="0 0 25 41"><path fill="#FF7F00" stroke="#fff" stroke-width="2" d="M12.5 1C6.7 1 2 5.7 2 11.5c0 7.5 10.5 18 10.5 18s10.5-10.5 10.5-18C23 5.7 18.3 1 12.5 1z"/><circle cx="12.5" cy="11.5" r="4" fill="#fff"/></svg>',
+                className: 'custom-div-icon',
+                iconSize: [25, 41],
+                iconAnchor: [12, 41]
+            });
+            
+            // Añadir marcadores para cada consulado
+            consulados.forEach(consulado => {
+                L.marker([consulado.lat, consulado.lon], {icon: conIcon})
+                    .addTo(map)
+                    .bindPopup(`<b>${consulado.nombre}</b><br>${consulado.pais}`);
+            });
+        }
+        
+        // Configuración del chat en vivo
+        function setupChat() {
+            const chatButton = document.querySelector('.chat-button');
+            const chatContainer = document.querySelector('.chat-container');
+            const closeChat = document.querySelector('.close-chat');
+            const sendButton = document.querySelector('.send-button');
+            const chatInput = document.querySelector('.chat-input');
+            const chatMessages = document.querySelector('.chat-messages');
+            const chatOptions = document.querySelectorAll('.chat-option');
+            
+            // Abrir/cerrar el chat
+            chatButton.addEventListener('click', function() {
+                chatContainer.classList.toggle('active');
+                // Ocultar notificación cuando se abre el chat
+                document.querySelector('.notification').style.display = 'none';
+            });
+            
+            closeChat.addEventListener('click', function() {
+                chatContainer.classList.remove('active');
+            });
+            
+            // Enviar mensaje al presionar el botón
+            sendButton.addEventListener('click', sendMessage);
+            
+            // Enviar mensaje al presionar Enter
+            chatInput.addEventListener('keyup', function(event) {
+                if (event.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+            
+            // Opciones de chat predefinidas
+            chatOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    const message = this.textContent;
+                    addMessage(message, 'user');
+                    setTimeout(() => {
+                        generateBotResponse(message);
+                    }, 1000);
+                });
+            });
+            
+            // Función para enviar mensaje
+            function sendMessage() {
+                const message = chatInput.value.trim();
+                if (message !== '') {
+                    addMessage(message, 'user');
+                    chatInput.value = '';
+                    setTimeout(() => {
+                        generateBotResponse(message);
+                    }, 1000);
+                }
+            }
+            
+            // Función para añadir mensaje al chat
+            function addMessage(text, sender) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${sender}-message`;
+                
+                const time = new Date();
+                const timeString = `${time.getHours()}:${time.getMinutes().toString().padStart(2, '0')}`;
+                
+                messageDiv.innerHTML = `
+                    ${text}
+                    <div class="message-time">${timeString}</div>
+                `;
+                
+                chatMessages.appendChild(messageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            
+            // Función para generar respuesta del bot
+            function generateBotResponse(userMessage) {
+                let response = '';
+                const lowerMessage = userMessage.toLowerCase();
+                
+                if (lowerMessage.includes('pasaporte') || lowerMessage.includes('documento')) {
+                    response = 'Para información sobre pasaportes, puedes visitar la sección "Emisión y renovación de pasaportes" en nuestra página. Allí encontrarás requisitos, procesos y tiempos de entrega. ¿Necesitas información específica sobre algún requisito?';
+                } else if (lowerMessage.includes('visa') || lowerMessage.includes('turista')) {
+                    response = 'Para trámites de visa, te recomiendo revisar la sección "Visas y permisos" en nuestra página. Allí encontrarás los tipos de visa disponibles y los requisitos para cada una. ¿Tienes alguna pregunta específica sobre visas?';
+                } else if (lowerMessage.includes('consulado') || lowerMessage.includes('ubicación') || lowerMessage.includes('dirección')) {
+                    response = 'Puedes encontrar la ubicación de todos nuestros consulados en la sección "Ubicaciones" de nuestra página. También tenemos un mapa interactivo con todas las sedes consulares. ¿Necesitas la dirección de un consulado específico?';
+                } else if (lowerMessage.includes('emergencia') || lowerMessage.includes('ayuda') || lowerMessage.includes('urgencia')) {
+                    response = 'En caso de emergencia, te recomendamos contactar directamente al consulado más cercano. También puedes revisar la sección "Ayuda en emergencias" para conocer los tipos de asistencia que ofrecemos. ¿Estás en una situación de emergencia?';
+                } else if (lowerMessage.includes('hola') || lowerMessage.includes('buenas')) {
+                    response = '¡Hola! Soy tu asistente virtual de consulados de Ecuador. Estoy aquí para ayudarte con información sobre servicios consulares, trámites y ubicaciones. ¿En qué puedo asistirte hoy?';
+                } else {
+                    response = 'Gracias por tu mensaje. Para obtener información más detallada, te recomiendo revisar las secciones específicas en nuestra página web. Si necesitas asistencia personalizada, puedes contactar directamente con el consulado correspondiente. ¿Hay algo más en lo que pueda ayudarte?';
+                }
+                
+                addMessage(response, 'bot');
+            }
+        }
+        
+        // Configuración de los formularios de trámites
+        function setupTramites() {
+            const modal = document.getElementById('modal-tramite');
+            const modalTitulo = document.getElementById('modal-titulo');
+            const modalCuerpo = document.getElementById('modal-cuerpo');
+            const btnCancelar = document.getElementById('btn-cancelar');
+            const btnEnviar = document.getElementById('btn-enviar');
+            const closeModal = document.querySelector('.close-modal');
+            const botonesTramite = document.querySelectorAll('.iniciar-tramite');
+            
+            // Abrir modal al hacer clic en un botón de trámite
+            botonesTramite.forEach(boton => {
+                boton.addEventListener('click', function() {
+                    const tipoTramite = this.getAttribute('data-tramite');
+                    abrirFormularioTramite(tipoTramite);
+                });
+            });
+            
+            // Cerrar modal
+            btnCancelar.addEventListener('click', cerrarModal);
+            closeModal.addEventListener('click', cerrarModal);
+            
+            // Enviar formulario
+            btnEnviar.addEventListener('click', enviarFormulario);
+            
+            // Función para abrir el formulario correspondiente
+            function abrirFormularioTramite(tipo) {
+                let titulo = '';
+                let formulario = '';
+                
+                switch(tipo) {
+                    case 'pasaporte':
+                        titulo = 'Solicitud de Pasaporte Ecuatoriano';
+                        formulario = generarFormularioPasaporte();
+                        break;
+                    case 'visa':
+                        titulo = 'Solicitud de Visa para Ecuador';
+                        formulario = generarFormularioVisa();
+                        break;
+                    case 'nacimiento':
+                        titulo = 'Registro de Nacimiento en el Exterior';
+                        formulario = generarFormularioNacimiento();
+                        break;
+                    case 'matrimonio':
+                        titulo = 'Registro de Matrimonio en el Exterior';
+                        formulario = generarFormularioMatrimonio();
+                        break;
+                    case 'legalizacion':
+                        titulo = 'Legalización de Documentos';
+                        formulario = generarFormularioLegalizacion();
+                        break;
+                    case 'registro':
+                        titulo = 'Registro Consular';
+                        formulario = generarFormularioRegistro();
+                        break;
+                }
+                
+                modalTitulo.textContent = titulo;
+                modalCuerpo.innerHTML = formulario;
+                modal.classList.add('active');
+            }
+            
+            // Función para cerrar el modal
+            function cerrarModal() {
+                modal.classList.remove('active');
+            }
+            
+            // Función para enviar el formulario
+            function enviarFormulario() {
+                // Simular envío del formulario
+                const progressBar = document.querySelector('.progress');
+                let progress = 0;
+                
+                const interval = setInterval(() => {
+                    progress += 10;
+                    progressBar.style.width = progress + '%';
+                    
+                    if (progress >= 100) {
+                        clearInterval(interval);
+                        
+                        // Mostrar mensaje de éxito
+                        modalCuerpo.innerHTML = `
+                            <div class="success-message">
+                                <i class="fas fa-check-circle"></i>
+                                <h3>¡Solicitud Enviada Exitosamente!</h3>
+                                <p>Hemos recibido tu solicitud. Te contactaremos en un plazo de 48 horas para confirmar los detalles y coordinar los siguientes pasos.</p>
+                                <p>Número de seguimiento: <strong>EC-${Date.now().toString().substr(-6)}</strong></p>
+                            </div>
+                        `;
+                        
+                        // Ocultar botones del modal
+                        document.querySelector('.modal-footer').style.display = 'none';
+                        
+                        // Cerrar modal después de 5 segundos
+                        setTimeout(() => {
+                            cerrarModal();
+                            document.querySelector('.modal-footer').style.display = 'flex';
+                        }, 5000);
+                    }
+                }, 200);
+            }
+            
+            // Generadores de formularios para cada tipo de trámite
+            function generarFormularioPasaporte() {
+                return `
+                    <p>Complete el siguiente formulario para solicitar la emisión o renovación de su pasaporte ecuatoriano.</p>
+                    
+                    <div class="form-group">
+                        <label for="tipo-solicitud">Tipo de solicitud <span class="required">*</span></label>
+                        <select class="form-control" id="tipo-solicitud" required>
+                            <option value="">Seleccione una opción</option>
+                            <option value="primera-vez">Primera vez</option>
+                            <option value="renovacion">Renovación</option>
+                            <option value="duplicado">Duplicado por pérdida</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="nombres">Nombres <span class="required">*</span></label>
+                            <input type="text" class="form-control" id="nombres" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="apellidos">Apellidos <span class="required">*</span></label>
+                            <input type="text" class="form-control" id="apellidos" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="cedula">Cédula de Identidad <span class="required">*</span></label>
+                            <input type="text" class="form-control" id="cedula" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="fecha-nacimiento">Fecha de Nacimiento <span class="required">*</span></label>
+                            <input type="date" class="form-control" id="fecha-nacimiento" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="consulado">Consulado de preferencia <span class="required">*</span></label>
+                        <select class="form-control" id="consulado" required>
+                            <option value="">Seleccione un consulado</option>
+                            <option value="nueva-york">Nueva York, Estados Unidos</option>
+                            <option value="madrid">Madrid, España</option>
+                            <option value="lima">Lima, Perú</option>
+                            <option value="buenos-aires">Buenos Aires, Argentina</option>
+                            <option value="santiago">Santiago, Chile</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Documentos a adjuntar <span class="required">*</span></label>
+                        <div class="file-upload" onclick="document.getElementById('archivos-pasaporte').click()">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>Haga clic para subir los documentos requeridos</p>
+                            <p class="form-note">Formatos aceptados: PDF, JPG, PNG (Tamaño máximo: 5MB por archivo)</p>
+                        </div>
+                        <input type="file" id="archivos-pasaporte" class="file-input" multiple>
+                        <div class="progress-bar">
+                            <div class="progress"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="observaciones">Observaciones adicionales</label>
+                        <textarea class="form-control" id="observaciones" rows="3" placeholder="Agregue cualquier información adicional que considere relevante..."></textarea>
+                    </div>
+                `;
+            }
+            
+            function generarFormularioVisa() {
+                return `
+                    <p>Complete el siguiente formulario para solicitar una visa para Ecuador.</p>
+                    
+                    <div class="form-group">
+                        <label for="tipo-visa">Tipo de visa solicitada <span class="required">*</span></label>
+                        <select class="form-control" id="tipo-visa" required>
+                            <option value="">Seleccione una opción</option>
+                            <option value="turista">Turista (hasta 90 días)</option>
+                            <option value="temporal">Temporal (estudios, trabajo)</option>
+                            <option value="permanente">Permanente</option>
+                            <option value="diplomatica">Diplomática/Oficial</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="nacionalidad">Nacionalidad <span class="required">*</span></label>
+                            <input type="text" class="form-control" id="nacionalidad" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="pasaporte-actual">Número de pasaporte actual <span class="required">*</span></label>
+                            <input type="text" class="form-control" id="pasaporte-actual" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="fecha-nacimiento-visa">Fecha de Nacimiento <span class="required">*</span></label>
+                            <input type="date" class="form-control" id="fecha-nacimiento-visa" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="fecha-viaje">Fecha prevista de viaje <span class="required">*</span></label>
+                            <input type="date" class="form-control" id="fecha-viaje" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="motivo-viaje">Motivo del viaje <span class="required">*</span></label>
+                        <textarea class="form-control" id="motivo-viaje" rows="3" required placeholder="Describa el propósito de su visita a Ecuador..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Documentos a adjuntar <span class="required">*</span></label>
+                        <div class="file-upload" onclick="document.getElementById('archivos-visa').click()">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>Haga clic para subir los documentos requeridos</p>
+                            <p class="form-note">Formatos aceptados: PDF, JPG, PNG (Tamaño máximo: 5MB por archivo)</p>
+                        </div>
+                        <input type="file" id="archivos-visa" class="file-input" multiple>
+                        <div class="progress-bar">
+                            <div class="progress"></div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Funciones similares para los otros tipos de formularios (nacimiento, matrimonio, legalizacion, registro)
+            function generarFormularioNacimiento() {
+                return `
+                    <p>Complete el siguiente formulario para registrar un nacimiento ocurrido en el exterior.</p>
+                    <!-- Contenido del formulario de nacimiento -->
+                    <div class="form-group">
+                        <label for="nombre-nino">Nombre completo del niño/a <span class="required">*</span></label>
+                        <input type="text" class="form-control" id="nombre-nino" required>
+                    </div>
+                    <!-- Más campos del formulario -->
+                `;
+            }
+            
+            function generarFormularioMatrimonio() {
+                return `
+                    <p>Complete el siguiente formulario para registrar un matrimonio celebrado en el exterior.</p>
+                    <!-- Contenido del formulario de matrimonio -->
+                    <div class="form-group">
+                        <label for="fecha-matrimonio">Fecha de matrimonio <span class="required">*</span></label>
+                        <input type="date" class="form-control" id="fecha-matrimonio" required>
+                    </div>
+                    <!-- Más campos del formulario -->
+                `;
+            }
+            
+            function generarFormularioLegalizacion() {
+                return `
+                    <p>Complete el siguiente formulario para solicitar la legalización de documentos.</p>
+                    <!-- Contenido del formulario de legalización -->
+                    <div class="form-group">
+                        <label for="tipo-documento">Tipo de documento <span class="required">*</span></label>
+                        <select class="form-control" id="tipo-documento" required>
+                            <option value="">Seleccione una opción</option>
+                            <option value="academico">Documento académico</option>
+                            <option value="poder">Poder notarial</option>
+                            <option value="antecedentes">Certificado de antecedentes</option>
+                            <option value="comercial">Documento comercial</option>
+                        </select>
+                    </div>
+                    <!-- Más campos del formulario -->
+                `;
+            }
+            
+            function generarFormularioRegistro() {
+                return `
+                    <p>Complete el siguiente formulario para inscribirse en el registro consular.</p>
+                    <!-- Contenido del formulario de registro -->
+                    <div class="form-group">
+                        <label for="pais-residencia">País de residencia <span class="required">*</span></label>
+                        <input type="text" class="form-control" id="pais-residencia" required>
+                    </div>
+                    <!-- Más campos del formulario -->
+                `;
+            }
+        }
+    </script>
+</body>
+</html>
